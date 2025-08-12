@@ -109,6 +109,30 @@ DELIMITER ;
 SELECT InfoAluguel(1);
 
 
+DELIMITER $$
+CREATE FUNCTION CalcularDescontoPorDias(AluguelID INT)
+RETURNS INT DETERMINISTIC
+
+BEGIN
+DECLARE Desconto INT;
+SELECT
+        CASE
+                WHEN DATEDIFF(data_fim, data_inicio) BETWEEN 4 AND 6 THEN 5
+                WHEN DATEDIFF(data_fim, data_inicio) BETWEEN 7 AND 9 THEN 10
+                WHEN DATEDIFF(data_fim, data_inicio) >= 10 THEN 15
+                ELSE 0
+        END
+        INTO Desconto
+FROM alugueis
+WHERE aluguel_id = AluguelID;
+RETURN Desconto;
+END$$
+
+DELIMITER ;
+
+SELECT CalcularDescontoPorDias(1);
+
+
 
 
 
