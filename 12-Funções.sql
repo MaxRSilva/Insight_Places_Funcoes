@@ -29,3 +29,5 @@ RETURN media;
 END$$
 
 DELIMITER ;
+
+SELECT MediaAvalicoes();
