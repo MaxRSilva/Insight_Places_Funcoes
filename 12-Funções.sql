@@ -150,6 +150,42 @@ END$$
 DELIMITER ;
 
 
+DELIMITER $$
+USE `insightplaces`$$
+CREATE FUNCTION `InfoAluguel` (IdAluguel INT)
+RETURNS VARCHAR(255)
+DETERMINISTIC
+BEGIN
+  DECLARE NomeCliente VARCHAR(100);
+  DECLARE PrecoTotal DECIMAL(10,2);
+  DECLARE Dias INT;
+  DECLARE ValorDiaria DECIMAL(10,2);
+  DECLARE Resultado VARCHAR(255);
+
+  -- Busca os dados do aluguel
+  SELECT c.nome, a.preco_total, DATEDIFF(data_fim, data_inicio)
+  INTO NomeCliente, PrecoTotal, Dias
+  FROM alugueis a
+  JOIN clientes c
+    ON a.cliente_id = c.cliente_id
+  WHERE a.aluguel_id = IdAluguel;
+
+  -- Tratamento para quando não existe ou dias inválidos
+  IF NomeCliente IS NULL OR Dias IS NULL OR Dias <= 0 THEN 
+      SET Resultado = '0';
+  ELSE
+      SET ValorDiaria = PrecoTotal / Dias;
+      SET Resultado = CONCAT('Nome: ', NomeCliente, ', Valor Diário: R$', FORMAT(ValorDiaria, 2));
+  END IF;
+
+  RETURN Resultado;
+END$$
+DELIMITER ;
+
+
+
+
+SELECT InfoAluguel(0);
 
 
 
